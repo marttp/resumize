@@ -22,7 +22,7 @@ fn main() {
 fn App() -> Element {
     rsx! {
         div {
-            class: "bg-pale-yellow",
+            class: "bg-pale-yellow h-screen",
             Router::<Route> {}
         }
     }
