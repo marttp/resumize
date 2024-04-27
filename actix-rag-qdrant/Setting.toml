@@ -1,0 +1,10 @@
+[server]
+port = 8080
+
+[db]
+host = "localhost"
+port = 6333
+
+[llm]
+model = "model1"
+embedding_model = "model2"
