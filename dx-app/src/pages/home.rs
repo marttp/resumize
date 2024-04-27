@@ -7,6 +7,7 @@ use crate::components::navbar::Navbar;
 pub fn Home() -> Element {
     let mut job_description = use_signal(|| "".to_string());
     let mut summarize = use_signal(|| "".to_string());
+
     rsx! {
         Navbar {}
         div {
@@ -18,7 +19,7 @@ pub fn Home() -> Element {
             }
             textarea {
                 id: "message",
-                class: "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+                class: "block p-2.5 w-full text-sm rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500",
                 placeholder: "Place job description here...",
                 rows: 6,
                 value: "{job_description}",
@@ -26,10 +27,12 @@ pub fn Home() -> Element {
             }
             button {
                 r#type: "button",
-                class: "container my-2 px-3 py-2 text-sm font-medium text-center bg-vibrant-pink hover:bg-light-pink rounded-lg text-white",
+                class: "container my-2 px-3 py-2 text-sm font-medium text-center bg-vibrant-pink hover:bg-light-pink rounded-lg text-white transition-colors duration-200",  // Add transition for smooth color change
                 onclick: move |event| {
-                    summarize.set(job_description.to_string().clone());
-                    job_description.set("".to_string()); // Reset form
+                    if !job_description().is_empty() {
+                        summarize.set(job_description.to_string().clone());
+                        job_description.set("".to_string());
+                    }
                 },
                 "Submit"
             }
