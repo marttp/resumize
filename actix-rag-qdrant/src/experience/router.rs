@@ -9,7 +9,7 @@ use futures::{future::ok, stream::once};
 use log::info;
 
 #[post("/experiences/resume")]
-pub async fn generate_resume(text_payload: web::Json<String>) -> impl Responder {
+pub async fn generate_resume(text_payload: String) -> impl Responder {
     // TODO: Add communicate to LLM
     println!("Received text payload with size {}", text_payload.len());
     HttpResponse::Ok().body(text_payload.clone())
