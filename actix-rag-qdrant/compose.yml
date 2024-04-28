@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  qdrant:
+    container_name: qdrant
+    image: qdrant/qdrant:v1.9.0
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - rag-resume:/qdrant/storage # Mapping without store on the project
+
+volumes:
+  # For temporary purpose
+  rag-resume: {}
