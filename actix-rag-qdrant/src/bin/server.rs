@@ -3,7 +3,7 @@ use actix_web::{App, http::StatusCode, HttpServer, middleware::Logger, web};
 use actix_web::middleware::ErrorHandlers;
 use env_logger::Env;
 use actix_rag_qdrant::common::{add_error_header, health_checker_handler};
-use actix_rag_qdrant::experience::router::{echo, hello};
+use actix_rag_qdrant::experience::router::{generate_resume, save_experience};
 
 #[derive(Clone, Debug)]
 struct AppState {
@@ -19,8 +19,8 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(app_state.clone()))
-            .service(hello)
-            .service(echo)
+            .service(generate_resume)
+            .service(save_experience)
             .service(health_checker_handler)
             .wrap(Cors::default())
             .wrap(Logger::default())
