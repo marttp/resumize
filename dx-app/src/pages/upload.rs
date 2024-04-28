@@ -41,43 +41,41 @@ pub fn Upload() -> Element {
 
     rsx! {
         Navbar {}
-        h1 { "File Upload Example" }
-        p { "Drop a .txt, .rs, or .js file here to read it" }
-        button { onclick: move |_| files_uploaded.write().clear(), "Clear files" }
-
         div {
-            label { r#for: "filereader", "Upload text/rust files and read them" }
-            input {
-                r#type: "file",
-                accept: ".txt,.pdf,.json",
-                multiple: true,
-                name: "filereader",
-                directory: false,
-                onchange: upload_files,
-            }
-        }
-
-        div {
-            id: "drop-zone",
-            prevent_default: "ondragover ondrop",
-            background_color: if hovered() { "lightblue" } else { "lightgray" },
-            ondragover: move |_| hovered.set(true),
-            ondragleave: move |_| hovered.set(false),
-            ondrop: move |evt| async move {
-                hovered.set(false);
-                if let Some(file_engine) = evt.files() {
-                    read_files(file_engine).await;
+            class: "p-4",
+            div {
+                class: "flex flex-col",
+                label { r#for: "filereader", "Drop your experience in json format" }
+                input {
+                    name: "filereader",
+                    r#type: "file",
+                    accept: ".json",
+                    multiple: false,
+                    directory: false,
+                    required: true,
+                    class: "my-4 display-none",
+                    onchange: upload_files
                 }
-            },
-            "Drop files here"
-        }
-
-        ul {
-            for file in files_uploaded.read().iter().rev() {
-                li {
-                    class: "text-black",
-                    span { "{file.name}" }
-                    // pre  { "{file.contents}"  }
+                div {
+                    id: "drop-zone",
+                    class: "block p-2.5 w-full text-sm rounded-lg border",
+                    prevent_default: "ondragover ondrop",
+                    background_color: if hovered() { "lightblue" } else { "lightgray" },
+                    ondragover: move |_| hovered.set(true),
+                    ondragleave: move |_| hovered.set(false),
+                    ondrop: move |evt| async move {
+                        hovered.set(false);
+                        if let Some(file_engine) = evt.files() {
+                            read_files(file_engine).await;
+                        }
+                    },
+                    "Drop files here"
+                }
+            }
+            if !files_uploaded.is_empty() {
+                p {
+                    class: "my-4",
+                    "Your experience has uploaded!"
                 }
             }
         }
