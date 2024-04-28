@@ -1,35 +1,9 @@
 use actix_cors::Cors;
-use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web, dev, http::{header, StatusCode}, Result, middleware::Logger};
-use env_logger::{Env};
-use actix_web::middleware::{ErrorHandlerResponse, ErrorHandlers};
-
-#[get("/health")]
-async fn health_checker_handler() -> impl Responder {
-    const MESSAGE: &str = "OK";
-    HttpResponse::Ok().json(serde_json::json!({"status": "success", "message": MESSAGE}))
-}
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
-
-fn add_error_header<B>(mut res: dev::ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>> {
-    res.response_mut().headers_mut().insert(
-        header::CONTENT_TYPE,
-        header::HeaderValue::from_static("Error"),
-    );
-    Ok(ErrorHandlerResponse::Response(res.map_into_left_body()))
-}
+use actix_web::{App, http::StatusCode, HttpServer, middleware::Logger, web};
+use actix_web::middleware::ErrorHandlers;
+use env_logger::Env;
+use actix_rag_qdrant::common::{add_error_header, health_checker_handler};
+use actix_rag_qdrant::experience::router::{echo, hello};
 
 #[derive(Clone, Debug)]
 struct AppState {
@@ -47,7 +21,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(app_state.clone()))
             .service(hello)
             .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            .service(health_checker_handler)
             .wrap(Cors::default())
             .wrap(Logger::default())
             .wrap(
