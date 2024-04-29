@@ -3,7 +3,8 @@ name = "resume_generate_server"
 port = 8000
 
 [db]
-url = "http://localhost:6333"
+url = "http://localhost:6334"
+collection = "experiences"
 
 [llm]
 model_url = "http://localhost:8080/v1"
