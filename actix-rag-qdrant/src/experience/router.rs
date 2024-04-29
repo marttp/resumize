@@ -6,8 +6,12 @@ use actix_multipart::form::{
 };
 use actix_web::{Error, HttpResponse, post, Responder, web};
 use futures::{future::ok, stream::once};
+use futures_util::StreamExt;
+use langchain_rust::document_loaders::{Loader, TextLoader};
+use langchain_rust::embedding::Embedder;
 use langchain_rust::embedding::openai::OpenAiEmbedder;
 use log::info;
+use crate::config::app_config::AppState;
 
 #[post("/experiences/resume")]
 pub async fn generate_resume(text_payload: String) -> impl Responder {
@@ -17,7 +21,7 @@ pub async fn generate_resume(text_payload: String) -> impl Responder {
 }
 
 #[post("/experiences/self")]
-pub async fn save_experience(MultipartForm(form): MultipartForm<UploadForm>) -> Result<impl Responder, Error> {
+pub async fn save_experience(MultipartForm(form): MultipartForm<UploadForm>, app_state: web::Data<AppState>) -> Result<impl Responder, Error> {
     let mut buffer = String::new();
     for mut f in form.file {
         let file_name = f.file_name.unwrap();
@@ -25,9 +29,15 @@ pub async fn save_experience(MultipartForm(form): MultipartForm<UploadForm>) -> 
         f.file.read_to_string(&mut buffer)?;
     }
     // This line has been manual test that file able to received
-    // TODO: Transform to vector by embedded model and put to Qdrant
-    // let body = once(ok::<_, Error>(web::Bytes::from(buffer.clone().into_bytes())));
-    // Ok(HttpResponse::Ok().content_type("application/json").streaming(body))
+    // Transform to vector by embedded model and put to Qdrant
+    // Simple split by comma (,)
+    let documents = buffer.clone()
+        .split(",")
+        .map(|x| x.to_string())
+        .collect::<Vec<String>>();
+    let embedded_model = app_state.llm_embedding_model.model_embedded.clone();
+    let response = embedded_model.embed_documents(&documents.clone()).await.unwrap();
+    // TODO: Put to Qdrant
     Ok(HttpResponse::Ok().body("Your experience has been uploaded!"))
 }
 
