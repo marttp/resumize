@@ -8,6 +8,8 @@ use crate::llm::llama_model::ModelAccessor;
 #[derive(Clone)]
 pub struct AppState {
     pub app_name: String,
+    pub collection: String,
+    pub app_config: AppConfig,
     pub qdrant_client: Arc<QdrantDb>,
     pub llm_model: Arc<ModelAccessor>,
     pub llm_embedding_model: Arc<EmbeddedModelAccessor>,
@@ -21,19 +23,19 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-    pub fn new() -> Arc<Self> {
+    pub fn new() -> Self {
         let settings = Config::builder()
             .add_source(config::File::with_name("./Setting.toml"))
             .build()
             .unwrap();
-
-        Arc::new(AppConfig {
+        AppConfig {
             server: Server {
                 name: settings.get_string("server.name").unwrap(),
                 port: settings.get_int("server.port").unwrap() as u16,
             },
             vector_db: QdrantConfig {
                 url: settings.get_string("db.url").unwrap(),
+                collection: settings.get_string("db.collection").unwrap(),
             },
             llm: Llm {
                 model_url: settings.get_string("llm.model_url").unwrap(),
@@ -41,13 +43,14 @@ impl AppConfig {
                 embedding_model_url: settings.get_string("llm.embedding_model_url").unwrap(),
                 embedding_model: settings.get_string("llm.embedding_model").unwrap(),
             },
-        })
+        }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct QdrantConfig {
     pub url: String,
+    pub collection: String
 }
 
 #[derive(Debug, Clone)]
