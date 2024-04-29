@@ -34,8 +34,8 @@ use crate::llm::llama_embedded::create_llm_embedded;
 use crate::llm::llama_model::create_llm;
 
 #[post("/experiences/resume/{job_title}")]
-pub async fn generate_resume(path: web::Path<(String)>, job_description: String, app_state: Data<AppState>) -> Result<impl Responder, Error> {
-    let (job_title) = path.into_inner();
+pub async fn generate_resume(path: web::Path<String>, job_description: String, app_state: Data<AppState>) -> Result<impl Responder, Error> {
+    let job_title = path.into_inner();
     // Connect to Qdrant
     /*
         Cannot use because langchain-rust is not up-to-date with compatible payload
@@ -118,7 +118,7 @@ async fn retrieve_relevant_documents(app_state: &Data<AppState>, embedded_respon
         limit: 100,
         with_payload: Some(true.into()),
         filter: Some(Filter::any([
-            Condition::matches("metadata.owner", MY_EXPERIENCE.clone().to_string()),
+            Condition::matches("metadata.owner", MY_EXPERIENCE.to_string()),
         ])),
         ..Default::default()
     })
@@ -164,7 +164,7 @@ pub async fn save_experience(MultipartForm(form): MultipartForm<UploadForm>, app
         .iter()
         .map(|s| Document::new(s).with_metadata({
             let mut metadata = HashMap::new();
-            metadata.insert("owner".to_string(), json!(MY_EXPERIENCE.clone()));
+            metadata.insert("owner".to_string(), json!(MY_EXPERIENCE));
             metadata
         }))
         .collect::<Vec<_>>();
@@ -187,7 +187,7 @@ async fn get_vector_store(app_state: Data<AppState>, is_filter: bool) -> Store {
             .client(create_vector_client(app_state.app_config.clone()))
             .collection_name(app_state.collection.clone().as_str())
             .search_filter(Filter::must([
-                Condition::matches("doc", MY_EXPERIENCE.clone().to_string()),
+                Condition::matches("doc", MY_EXPERIENCE.to_string()),
             ]))
             .build()
             .await
