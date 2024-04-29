@@ -2,8 +2,7 @@
 port = 8080
 
 [db]
-host = "localhost"
-port = 6333
+url = "http://localhost:6333"
 
 [llm]
 model = "model1"
