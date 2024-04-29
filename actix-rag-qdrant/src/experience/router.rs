@@ -51,17 +51,42 @@ pub async fn generate_resume(path: web::Path<(String)>, job_description: String,
 
     let prompt = message_formatter![
         fmt_message!(Message::new_system_message(
-            "You are world class technical resume reviewer and also HR from top company of the world.
+            "
+             You are world class technical resume reviewer and also HR from top company of the world and your work/guide/suggestions will always be concise and clear without any ambiguity.
+
              You have been given a job description to matching with job experiences/educations of our customer.
-             Please review the job description and provide the best matching experiences from the customer experience in the resume format.
-             "
+             Please review the job description and provide the best matching experiences from the personal experience in the resume format as detailed as possible.
+             You can also provide the tips or suggestion if you think it is relevant to the job description such as side projects which might be relevant to the job description.
+
+             After you analyze all of the informations, Give the score between current experience compare with job description and provide as a score between 0-10 based on your encouragement.
+             If you think the experience is not relevant at all, you can provide the score 0.
+             If you think the experience is very relevant, you can provide the score 10.
+            "
         )),
         fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
             "Here the job description: {job_description}", "job_description",
         ))),
         fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
             "Here are all of relate information: {experience_education}", "experience_education",
-        )))
+        ))),
+        fmt_message!(Message::new_ai_message(
+            "
+              Response in Resume format
+              Experience:
+                - [Experience 1]
+                - [Experience 2]
+                - [Experience N]
+              Education:
+                - [Education 1]
+                - [Education 2]
+                - [Education N]
+              Tips:
+                - [Tips 1]
+                - [Tips 2]
+                - [Tips N]
+              Encouragement Score: [Score]
+            "
+        ))
     ];
     let llama3_chain = LLMChainBuilder::new()
         .prompt(prompt)
