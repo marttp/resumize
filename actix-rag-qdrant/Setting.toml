@@ -6,7 +6,7 @@ port = 8000
 url = "http://localhost:6333"
 
 [llm]
-model_url = "http://localhost:8080"
-model = "model1"
-embedding_model_url = "http://localhost:8080"
-embedding_model = "model2"
+model_url = "http://localhost:8080/v1"
+model = "Llama-3-8B"
+embedding_model_url = "http://localhost:8080/v1"
+embedding_model = "Llama-3-8B"

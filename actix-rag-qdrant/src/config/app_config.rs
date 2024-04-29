@@ -1,6 +1,17 @@
 use std::sync::Arc;
 
 use config::Config;
+use crate::config::vector_db::QdrantDb;
+use crate::llm::llama_embedded::EmbeddedModelAccessor;
+use crate::llm::llama_model::ModelAccessor;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub app_name: String,
+    pub qdrant_client: Arc<QdrantDb>,
+    pub llm_model: Arc<ModelAccessor>,
+    pub llm_embedding_model: Arc<EmbeddedModelAccessor>,
+}
 
 #[derive(Debug, Clone)]
 pub struct AppConfig {
@@ -28,7 +39,7 @@ impl AppConfig {
                 model_url: settings.get_string("llm.model_url").unwrap(),
                 model: settings.get_string("llm.model").unwrap(),
                 embedding_model_url: settings.get_string("llm.embedding_model_url").unwrap(),
-                embedding_model: "llm.embedding_model".to_string(),
+                embedding_model: settings.get_string("llm.embedding_model").unwrap(),
             },
         })
     }
