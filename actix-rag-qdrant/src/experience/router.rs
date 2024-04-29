@@ -6,6 +6,7 @@ use actix_multipart::form::{
 };
 use actix_web::{Error, HttpResponse, post, Responder, web};
 use futures::{future::ok, stream::once};
+use langchain_rust::embedding::openai::OpenAiEmbedder;
 use log::info;
 
 #[post("/experiences/resume")]

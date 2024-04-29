@@ -1,9 +1,12 @@
 [server]
-port = 8080
+name = "resume_generate_server"
+port = 8000
 
 [db]
 url = "http://localhost:6333"
 
 [llm]
+model_url = "http://localhost:8080"
 model = "model1"
+embedding_model_url = "http://localhost:8080"
 embedding_model = "model2"
