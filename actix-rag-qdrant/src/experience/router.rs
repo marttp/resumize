@@ -76,13 +76,9 @@ pub async fn generate_resume(path: web::Path<(String)>, job_description: String,
         .invoke(prompt_args)
         .await;
     match invoke_result {
-        Ok(result) => {
-            println!("Result: {:?}", result);
-        }
+        Ok(result) => Ok(HttpResponse::Ok().content_type("text/plain").body(result)),
         Err(e) => panic!("Error invoking: {:?}", e),
     }
-    let body = once(ok::<_, Error>(web::Bytes::from(experience_education.clone().into_bytes())));
-    Ok(HttpResponse::Ok().content_type("text/plain").streaming(body))
 }
 
 async fn retrieve_relevant_documents(app_state: &Data<AppState>, embedded_response: Vec<Vec<f64>>) -> String {
