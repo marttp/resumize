@@ -1,24 +1,14 @@
-use std::sync::Arc;
-
 use actix_cors::Cors;
 use actix_web::{App, http::StatusCode, HttpServer, middleware::Logger, web};
 use actix_web::middleware::ErrorHandlers;
 use env_logger::Env;
 
 use actix_rag_qdrant::common::{add_error_header, health_checker_handler};
-use actix_rag_qdrant::config::app_config::AppConfig;
+use actix_rag_qdrant::config::app_config::{AppConfig, AppState};
 use actix_rag_qdrant::config::vector_db::{create_vector_client, QdrantDb};
 use actix_rag_qdrant::experience::router::{generate_resume, save_experience};
 use actix_rag_qdrant::llm::llama_embedded::EmbeddedModelAccessor;
 use actix_rag_qdrant::llm::llama_model::ModelAccessor;
-
-#[derive(Clone)]
-struct AppState {
-    app_name: String,
-    qdrant_client: Arc<QdrantDb>,
-    llm_model: Arc<ModelAccessor>,
-    llm_embedding_model: Arc<EmbeddedModelAccessor>,
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
