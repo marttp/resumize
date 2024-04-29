@@ -1,6 +1,7 @@
 use actix_web::{dev, get, HttpResponse, Responder};
 use actix_web::http::header;
 use actix_web::middleware::ErrorHandlerResponse;
+pub const MY_EXPERIENCE: &str = "Thanaphoom Babparn"; // Enhancement by getting data from login user
 
 #[get("/health")]
 pub async fn health_checker_handler() -> impl Responder {
