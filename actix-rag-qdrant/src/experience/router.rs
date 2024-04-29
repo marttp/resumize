@@ -163,11 +163,14 @@ struct ResumeData {
 fn split_content(json_str: String) -> Vec<String> {
     // Simple split by comma (,)
     let data: ResumeData = serde_json::from_str(&json_str.clone()).unwrap();
-
-    let documents = json_str.clone()
-        .split(",")
-        .map(|x| x.to_string())
+    let educations = data.education.iter()
+        .map(|x| String::from(format!("educations:{}", x.to_string())))
         .collect::<Vec<String>>();
+    let experiences = data.professional.iter()
+        .map(|x| String::from(format!("experiences:{}", x.to_string())))
+        .collect::<Vec<String>>();
+    let documents = educations.iter().chain(experiences.iter()).cloned().collect::<Vec<String>>();
+    dbg!(documents.clone());
     documents
 }
 
