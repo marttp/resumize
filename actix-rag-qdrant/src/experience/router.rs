@@ -13,7 +13,11 @@ use futures_util::StreamExt;
 use langchain_rust::document_loaders::{Loader, TextLoader};
 use langchain_rust::embedding::Embedder;
 use langchain_rust::embedding::openai::OpenAiEmbedder;
-use langchain_rust::schemas::Document;
+use langchain_rust::language_models::llm::LLM;
+use langchain_rust::{fmt_message, fmt_template, message_formatter, prompt_args, template_fstring};
+use langchain_rust::chain::{Chain, LLMChainBuilder};
+use langchain_rust::prompt::HumanMessagePromptTemplate;
+use langchain_rust::schemas::{Document, Message};
 use langchain_rust::vectorstore::qdrant::{Store, StoreBuilder};
 use langchain_rust::vectorstore::{VecStoreOptions, VectorStore};
 use log::info;
@@ -27,9 +31,11 @@ use crate::common::MY_EXPERIENCE;
 use crate::config::app_config::AppState;
 use crate::config::vector_db::create_vector_client;
 use crate::llm::llama_embedded::create_llm_embedded;
+use crate::llm::llama_model::create_llm;
 
-#[post("/experiences/resume")]
-pub async fn generate_resume(text_payload: String, app_state: Data<AppState>) -> Result<impl Responder, Error> {
+#[post("/experiences/resume/{job_title}")]
+pub async fn generate_resume(path: web::Path<(String)>, job_description: String, app_state: Data<AppState>) -> Result<impl Responder, Error> {
+    let (job_title) = path.into_inner();
     // Connect to Qdrant
     /*
         Cannot use because langchain-rust is not up-to-date with compatible payload
@@ -39,14 +45,47 @@ pub async fn generate_resume(text_payload: String, app_state: Data<AppState>) ->
             .await
             .unwrap();
     */
-    let mut buffer = String::from(text_payload.clone());
+    let mut buffer = String::from(job_title.clone());
     let embedded_response = embedding(&app_state, &mut buffer).await;
-    let documents = retreive_relevant_documents(&app_state, embedded_response).await;
-    let body = once(ok::<_, Error>(web::Bytes::from(documents.clone().into_bytes())));
+    let experience_education = retrieve_relevant_documents(&app_state, embedded_response).await;
+
+    let prompt = message_formatter![
+        fmt_message!(Message::new_system_message(
+            "You are world class technical resume reviewer and also HR from top company of the world.
+             You have been given a job description to matching with job experiences/educations of our customer.
+             Please review the job description and provide the best matching experiences from the customer experience in the resume format.
+             "
+        )),
+        fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
+            "Here the job description: {job_description}", "job_description",
+        ))),
+        fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
+            "Here are all of relate information: {experience_education}", "experience_education",
+        )))
+    ];
+    let llama3_chain = LLMChainBuilder::new()
+        .prompt(prompt)
+        .llm(create_llm(app_state.app_config.llm.model_url.clone(), app_state.app_config.llm.model.clone()))
+        .build()
+        .unwrap();
+    let prompt_args = prompt_args! {
+        "job_description" => job_description.clone(),
+        "experience_education" => experience_education.clone(),
+    };
+    let invoke_result = llama3_chain
+        .invoke(prompt_args)
+        .await;
+    match invoke_result {
+        Ok(result) => {
+            println!("Result: {:?}", result);
+        }
+        Err(e) => panic!("Error invoking: {:?}", e),
+    }
+    let body = once(ok::<_, Error>(web::Bytes::from(experience_education.clone().into_bytes())));
     Ok(HttpResponse::Ok().content_type("text/plain").streaming(body))
 }
 
-async fn retreive_relevant_documents(app_state: &Data<AppState>, embedded_response: Vec<Vec<f64>>) -> String {
+async fn retrieve_relevant_documents(app_state: &Data<AppState>, embedded_response: Vec<Vec<f64>>) -> String {
     let client = app_state.qdrant_client.client.clone();
     let flat_vector_result = embedded_response.iter()
         .flat_map(|v| v.clone().iter().map(|x| *x as f32).collect::<Vec<f32>>())
@@ -54,7 +93,7 @@ async fn retreive_relevant_documents(app_state: &Data<AppState>, embedded_respon
 
     let results = client.search_points(&SearchPoints {
         collection_name: app_state.collection.clone(),
-        vector: flat_vector_result.clone(),
+        vector: flat_vector_result,
         limit: 100,
         with_payload: Some(true.into()),
         filter: Some(Filter::any([
@@ -64,11 +103,6 @@ async fn retreive_relevant_documents(app_state: &Data<AppState>, embedded_respon
     })
         .await
         .unwrap();
-
-    let test_result = results.result.clone().into_iter()
-        .map(|scored_point| scored_point.payload)
-        .collect::<Vec<_>>();
-    dbg!(test_result.clone());
 
     let documents = results
         .result
@@ -196,7 +230,11 @@ async fn upsert_to_vector(app_state: Data<AppState>, response: Vec<Vec<f64>>) ->
 }
 
 async fn embedding(app_state: &Data<AppState>, buffer: &mut String) -> Vec<Vec<f64>> {
-    let documents = vec![buffer.clone()];
+    let documents = buffer.clone()
+        .split("\n")
+        .filter(|s| !s.is_empty())
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>();
     let embedded_model = app_state.llm_embedding_model.model_embedded.clone();
     // Getting vector result from experience
     let response = embedded_model.embed_documents(&documents.clone()).await.unwrap();
