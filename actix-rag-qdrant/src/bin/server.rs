@@ -5,7 +5,7 @@ use env_logger::Env;
 
 use actix_rag_qdrant::common::{add_error_header, health_checker_handler};
 use actix_rag_qdrant::config::app_config::{AppConfig, AppState};
-use actix_rag_qdrant::config::vector_db::{create_vector_client, QdrantDb};
+use actix_rag_qdrant::config::vector_db::{create_collection, create_vector_client, QdrantDb};
 use actix_rag_qdrant::experience::router::{generate_resume, save_experience};
 use actix_rag_qdrant::llm::llama_embedded::EmbeddedModelAccessor;
 use actix_rag_qdrant::llm::llama_model::ModelAccessor;
@@ -16,6 +16,10 @@ async fn main() -> std::io::Result<()> {
     let app_config = AppConfig::new();
 
     let qdrant_client = QdrantDb::new(create_vector_client(app_config.clone()));
+    // Create collection - delete if needed
+    create_collection(&qdrant_client, app_config.vector_db.collection.clone())
+        .await
+        .unwrap();
     let llm_model = ModelAccessor::new(
         app_config.llm.model_url.clone(),
         app_config.llm.model.clone()
@@ -27,6 +31,8 @@ async fn main() -> std::io::Result<()> {
 
     let app_state = AppState {
         app_name: app_config.server.name.clone(),
+        collection: app_config.vector_db.collection.clone(),
+        app_config: app_config.clone(),
         qdrant_client,
         llm_model,
         llm_embedding_model,
