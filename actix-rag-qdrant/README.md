@@ -1,5 +1,4 @@
-# HR RAG system
-
+# Resumize backend
 
 # For development
 
