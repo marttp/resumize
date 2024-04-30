@@ -64,21 +64,42 @@ TBC
 - [Docker](https://www.docker.com/products/docker-desktop/) or [Podman](https://podman.io/) or whatever you like e.g. [Colima](https://github.com/abiosoft/colima) to run Qdrant
 
 ### Make it run locally
-- Clone the repository: `git clone https://github.com/marttp/rag-resume-generate`
+- Clone the repository: `git clone https://github.com/marttp/resumize`
 
 ### Run LlamaEdge for your local
-2. Navigate to the project directory: `cd resume-generator`
-3. Build the project: `cargo build --release`
+
+TBC
+
+1. Navigate to the project directory: `cd resume-generator`
+2. Build the project: `cargo build --release`
 
 ### Run Qdrant
 
+TBC
+
+1. Navigate to the project directory: `cd resume-generator`
+2. Build the project: `cargo build --release`
+
 ### Run Actix Web
+
+TBC
+
+1. Navigate to the project directory: `cd resume-generator`
+2. Build the project: `cargo build --release`
 
 ### Run Dioxus
 
+TBC
+
 #### Locally
 
+1. Navigate to the project directory: `cd resume-generator`
+2. Build the project: `cargo build --release`
+
 #### Bundle version
+
+1. Navigate to the project directory: `cd resume-generator`
+2. Build the project: `cargo build --release`
 
 ## License
 This project is licensed under the MIT License.
