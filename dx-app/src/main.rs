@@ -3,6 +3,8 @@
 mod components;
 mod pages;
 mod router;
+mod service;
+mod common;
 
 use dioxus::prelude::*;
 use log::LevelFilter;
@@ -22,7 +24,7 @@ fn main() {
 fn App() -> Element {
     rsx! {
         div {
-            class: "bg-pale-yellow h-screen",
+            class: "bg-pale-yellow",
             Router::<Route> {}
         }
     }

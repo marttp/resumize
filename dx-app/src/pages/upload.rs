@@ -40,42 +40,45 @@ pub fn Upload() -> Element {
     };
 
     rsx! {
-        Navbar {}
         div {
-            class: "p-4",
+            class: "flex flex-col h-screen",
+            Navbar {}
             div {
-                class: "flex flex-col",
-                label { r#for: "filereader", "Drop your experience in json format" }
-                input {
-                    name: "filereader",
-                    r#type: "file",
-                    accept: ".json",
-                    multiple: false,
-                    directory: false,
-                    required: true,
-                    class: "my-4 display-none",
-                    onchange: upload_files
-                }
+                class: "p-4",
                 div {
-                    id: "drop-zone",
-                    class: "block p-2.5 w-full text-sm rounded-lg border",
-                    prevent_default: "ondragover ondrop",
-                    background_color: if hovered() { "lightblue" } else { "lightgray" },
-                    ondragover: move |_| hovered.set(true),
-                    ondragleave: move |_| hovered.set(false),
-                    ondrop: move |evt| async move {
-                        hovered.set(false);
-                        if let Some(file_engine) = evt.files() {
-                            read_files(file_engine).await;
-                        }
-                    },
-                    "Drop files here"
+                    class: "flex flex-col",
+                    label { r#for: "filereader", "Drop your experience in json format" }
+                    input {
+                        name: "filereader",
+                        r#type: "file",
+                        accept: ".json",
+                        multiple: false,
+                        directory: false,
+                        required: true,
+                        class: "my-4 display-none",
+                        onchange: upload_files
+                    }
+                    div {
+                        id: "drop-zone",
+                        class: "block p-2.5 w-full text-sm rounded-lg border",
+                        prevent_default: "ondragover ondrop",
+                        background_color: if hovered() { "lightblue" } else { "lightgray" },
+                        ondragover: move |_| hovered.set(true),
+                        ondragleave: move |_| hovered.set(false),
+                        ondrop: move |evt| async move {
+                            hovered.set(false);
+                            if let Some(file_engine) = evt.files() {
+                                read_files(file_engine).await;
+                            }
+                        },
+                        "Drop files here"
+                    }
                 }
-            }
-            if !files_uploaded.is_empty() {
-                p {
-                    class: "my-4",
-                    "Your experience has uploaded!"
+                if !files_uploaded.is_empty() {
+                    p {
+                        class: "my-4",
+                        "Your experience has uploaded!"
+                    }
                 }
             }
         }
