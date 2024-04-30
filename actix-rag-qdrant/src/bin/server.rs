@@ -17,9 +17,9 @@ async fn main() -> std::io::Result<()> {
 
     let qdrant_client = QdrantDb::new(create_vector_client(app_config.clone()));
     // Create collection - delete if needed
-    // create_collection(&qdrant_client, app_config.vector_db.collection.clone())
-    //     .await
-    //     .unwrap();
+    create_collection(&qdrant_client, app_config.vector_db.collection.clone())
+        .await
+        .unwrap();
     let llm_model = ModelAccessor::new(
         app_config.llm.model_url.clone(),
         app_config.llm.model.clone()
