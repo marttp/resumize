@@ -20,7 +20,10 @@ This application helps generate resume content based on your experience and the 
 - **Upload Experience**: Upload your past experiences in JSON format to be used for generating the resume content.
 
 ## Demo
-[Link to your demo video]
+
+[Video demo](https://youtu.be/fBumbjukAF8?si=uSV3iefK_bEs8au0)
+
+[![Demo - Resumize (Dioxus, Actix Web, Qdrant, LlamaEdge)](https://img.youtube.com/vi/fBumbjukAF8/0.jpg)](https://youtu.be/fBumbjukAF8?si=uSV3iefK_bEs8au0)
 
 ## How it's designed
 
