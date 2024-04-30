@@ -1,4 +1,4 @@
-# Gen your new resume
+# Resumize (เรซูมั้ย?)
 
 ## Overview
 This application helps generate resume content based on your experience and the job description of your interest.
