@@ -102,38 +102,99 @@ Find the role you interested, put job title and job description to get your sugg
 
 ### Run LlamaEdge for your local
 
-TBC
+Please follow this article about how to run WASM on your locally [Getting Started with Llama-3-8B](https://www.secondstate.io/articles/llama-3-8b/). Below are the steps required for the project only
 
-1. Navigate to the project directory: `cd resume-generator`
-2. Build the project: `cargo build --release`
+1. Install WasmEdge via the following command line.
+    ```shell
+    curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- --plugin wasi_nn-ggml
+    ```
 
-### Run Qdrant
+2. Download the Llama-3-8B model GGUF file.
+    ```shell
+    curl -LO https://huggingface.co/second-state/Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct-Q5_K_M.gguf
+    ```
 
-TBC
+3. Download an API server app. It is also a cross-platform portable Wasm app that can run on many CPU and GPU devices.
+    ```shell
+    curl -LO https://github.com/LlamaEdge/LlamaEdge/releases/latest/download/llama-api-server.wasm
+    ```
 
-1. Navigate to the project directory: `cd resume-generator`
-2. Build the project: `cargo build --release`
+4. Download the chatbot web UI to interact with the model with a chatbot UI.
+    ```shell
+    curl -LO https://github.com/LlamaEdge/chatbot-ui/releases/latest/download/chatbot-ui.tar.gz
+    tar xzf chatbot-ui.tar.gz
+    rm chatbot-ui.tar.gz
+    ```
+
+5. Start an API server for the model
+    ```shell
+    wasmedge --dir .:. --nn-preload default:GGML:AUTO:Meta-Llama-3-8B-Instruct-Q5_K_M.gguf \
+      llama-api-server.wasm \
+      --prompt-template llama-3-chat \
+      --ctx-size 4096 \
+      --model-name Llama-3-8B
+    ```
+
+Feel free to take a look on the mentioned article if you couldn't understand them well. 🙇‍♂️
+
+### Run Qdrant on locally
+
+Depending on your approach, I would suggest to using container technology to spped up on build your playground
+
+#### Standalone container
+
+1. Open terminal and run below command if using docker - reference: https://qdrant.tech/documentation/quick-start/
+    ```shell
+    docker run -p 6333:6333 -p 6334:6334 \
+    -v $(pwd)/qdrant_storage:/qdrant/storage:z \
+    qdrant/qdrant
+    ```
+
+#### Compose file (I used this approach)
+
+1. Navigate to the project directory: `cd actix-rag-qdrant`
+2. Open terminal Run relate compose command (This example is using podman)
+    ```shell
+    podman compose up -d
+    ```
 
 ### Run Actix Web
 
-TBC
-
-1. Navigate to the project directory: `cd resume-generator`
-2. Build the project: `cargo build --release`
+1. Navigate to the project directory: `cd actix-rag-qdrant`
+2. Run below command to start dev server
+     ```shell
+     cargo watch -x "run --bin server"
+     ```
 
 ### Run Dioxus
 
-TBC
-
 #### Locally
 
-1. Navigate to the project directory: `cd resume-generator`
-2. Build the project: `cargo build --release`
+1. Navigate to the project directory: `cd dx-app`
+2. Install npm: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+3. Install the tailwind css cli: https://tailwindcss.com/docs/installation
+4. Run the following command in the root of the project to start the tailwind CSS compiler:
+    ```bash
+    npx tailwindcss -i ./input.css -o ./assets/tailwind.css --watch
+    ```
+5. Run the following command in the root of the project to start the Dioxus dev server:
+    ```bash
+    dx serve --hot-reload --platform desktop
+    ```
 
-#### Bundle version
+#### Bundle version (Only for macOS)
 
-1. Navigate to the project directory: `cd resume-generator`
-2. Build the project: `cargo build --release`
+1. Follow all step from *Locally* section
+2. Stop development mode and run below command instead
+    ```bash
+    dx build --release
+    ```
+3. If you success, You will have this dmg file.
+
+    ![CleanShot 2567-04-30 at 21 03 36@2x](https://github.com/marttp/resumize/assets/34801905/ec09b53c-d46f-4e72-81dd-14230954cf10)
+
+
+Apologize for haven't tried on Windows or Linux, I have only 1 laptop. 🙇‍♂️
 
 ## License
 This project is licensed under the MIT License.
