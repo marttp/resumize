@@ -7,4 +7,4 @@ Application to help generate resume content based on your experience and your in
 
 ![CleanShot 2567-04-28 at 01 26 00@2x](https://github.com/marttp/rag-resume-generate/assets/34801905/3e222f35-80da-4b7a-ae17-d517545ed31c)
 
-![CleanShot 2567-04-28 at 01 26 11@2x](https://github.com/marttp/rag-resume-generate/assets/34801905/df23b5a7-48f9-4fd7-802f-8f89ab1261f3)
+![CleanShot 2567-04-30 at 13 47 35@2x](https://github.com/marttp/rag-resume-generate/assets/34801905/f82b17db-a380-4d19-ba9b-42f28c393b88)
