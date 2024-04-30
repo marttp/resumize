@@ -5,6 +5,10 @@ This application helps generate resume content based on your experience and the 
 
 ![CleanShot 2567-04-28 at 01 25 21@2x](https://github.com/marttp/rag-resume-generate/assets/34801905/b04e820e-68a5-4c15-b93c-c43aad035fe6)
 
+## Article
+- EN
+- TH
+
 ## Tech Stack
 - [Dioxus](https://dioxuslabs.com/) 0.5.1
 - [Actix Web](https://actix.rs/) 4.5.1
@@ -23,8 +27,7 @@ This application helps generate resume content based on your experience and the 
 The project has been designed for few use-cases
 1. Upload my own experience (as JSON)
 2. Upload Job description from recruiter by copy from job market
-3. Create Resume content based on job description
-   with suggestion
+3. Create Resume content based on job description with suggestion
 
 ![CleanShot 2567-04-28 at 01 25 38@2x](https://github.com/marttp/rag-resume-generate/assets/34801905/eb8564e7-d3dc-46ac-a8d5-ca8745e2102b)
 
@@ -34,8 +37,9 @@ The project has been designed for few use-cases
 
 #### Description
 
+The idea behind is I want to apply RAG on this project. So I think about the scenario that we can use to matching with resume content, Why don't we use some datasource or original resume? This decision as you already know, I was using dataset approach and it's easier for me to use JSON because I have it on my own portfolio site.
 
-Current JSON format which acceptable on Backend
+Here is current JSON format which acceptable by Backend
 
 Reference: https://github.com/marttp/tpcoder-portfolio/blob/main/src/data/experiences.json
 
@@ -69,10 +73,9 @@ Reference: https://github.com/marttp/tpcoder-portfolio/blob/main/src/data/experi
 ```
 
 #### Enhancement
-- 1
-- 2
-- 3
-- 4
+- Consider to use PDF file should be general for many use-cases.
+- Could be implemented as asynchronous approach. User upload the file => Pass the file to workload which upsert document on vector database.
+- For each user upload, right now I read from constant value. However, I believe identify user identity on each upload should be much more usable on the future.
 
 ### Upload job description and generate new resume content
 
@@ -80,13 +83,12 @@ Reference: https://github.com/marttp/tpcoder-portfolio/blob/main/src/data/experi
 
 #### Description
 
-TBC
+Find the role you interested, put job title and job description to get your suggestion and score of encouragement to apply your dream role depending on your past experience.
 
 #### Enhancement
-- 1
-- 2
-- 3
-- 4
+- Currently, The result has shown in the group of text. Not the markdown. Meanwhile markdown result is responsed from LLM. I cannot do it on this project because currently, Dioxus don't have official Markdown support on desktop.
+- Because my Macbook Pro 2019 13 inches computation power could not process well with LLM project, I think it's better to designed as asynchronous approach as well as upload experience. For this scenarios, Send email about the result or send push notification and store it to inbox should be okay for the UX.
+- Better if the final result produce complete version of resume.
 
 ## How to run locally
 
