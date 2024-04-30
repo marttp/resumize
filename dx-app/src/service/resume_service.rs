@@ -2,7 +2,7 @@ use std::error::Error;
 use log::info;
 use reqwest::multipart::Part;
 
-async fn upload_file(file_name: String, contents: Vec<u8>) -> Result<(), Box<dyn Error>> {
+pub async fn upload_file(file_name: String, contents: Vec<u8>) -> Result<(), Box<dyn Error>> {
     let part = Part::bytes(contents).file_name(file_name);
     let file = reqwest::multipart::Form::new().part("file", part);
     let response = reqwest::Client::new()
@@ -14,7 +14,7 @@ async fn upload_file(file_name: String, contents: Vec<u8>) -> Result<(), Box<dyn
     Ok(())
 }
 
-async fn get_resume_recommendation(job_title: String, job_description: String) -> Result<String, Box<dyn Error>> {
+pub async fn get_resume_recommendation(job_title: String, job_description: String) -> Result<String, Box<dyn Error>> {
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert("Content-Type", "text/plain".parse()?);
     let request = reqwest::Client::new()

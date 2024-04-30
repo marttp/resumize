@@ -1,3 +1,4 @@
+use std::ops::Deref;
 use dioxus::prelude::*;
 use std::sync::Arc;
 use dioxus::core_macro::{component, rsx};
@@ -5,7 +6,9 @@ use dioxus::dioxus_core::Element;
 use dioxus::events::FormEvent;
 use dioxus::hooks::use_signal;
 use dioxus::html::{FileEngine, HasFileData};
+use crate::common::DataState;
 use crate::components::navbar::Navbar;
+use crate::service::resume_service::upload_file;
 
 #[derive(Debug)]
 struct UploadedFile {
@@ -17,6 +20,7 @@ struct UploadedFile {
 pub fn Upload() -> Element {
     let mut files_uploaded = use_signal(|| Vec::new() as Vec<UploadedFile>);
     let mut hovered = use_signal(|| false);
+    let mut file_state = use_signal(|| DataState::Idle);
 
     let read_files = move |file_engine: Arc<dyn FileEngine>| async move {
         let files = file_engine.files();
@@ -28,7 +32,17 @@ pub fn Upload() -> Element {
                     contents,
                 });
                 println!("{:?}", files_uploaded.get(0).unwrap().name.clone());
-                println!("{:?}", files_uploaded.get(0).unwrap().contents.clone());
+                // Do upload file to server
+                file_state.set(DataState::Loading);
+                upload_file(file_name.clone(), files_uploaded.get(0).unwrap().contents.clone())
+                    .await
+                    .and_then(|_| {
+                        file_state.set(DataState::Loaded);
+                        Ok(())
+                    })
+                    .unwrap_or_else(|err| {
+                        file_state.set(DataState::Error);
+                    });
             }
         }
     };
@@ -74,11 +88,32 @@ pub fn Upload() -> Element {
                         "Drop files here"
                     }
                 }
-                if !files_uploaded.is_empty() {
-                    p {
-                        class: "my-4",
-                        "Your experience has uploaded!"
-                    }
+                match file_state.read().deref() {
+                    DataState::Loading => rsx! {
+                        div {
+                            class: "flex items-center",
+                            div {
+                                class: "mx-2 animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"
+                            },
+                            p {
+                                class: "my-4",
+                                "Uploading your experience..."
+                            }
+                        }
+                    },
+                    DataState::Loaded => rsx! {
+                        p {
+                            class: "my-4",
+                            "Your experience has uploaded!"
+                        }
+                    },
+                    DataState::Error => rsx! {
+                        p {
+                            class: "my-4",
+                            "Failed to upload your experience!"
+                        }
+                    },
+                    _ => rsx! {}
                 }
             }
         }
