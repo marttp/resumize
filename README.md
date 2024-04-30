@@ -187,7 +187,7 @@ Depending on your approach, I would suggest to using container technology to spp
 1. Follow all step from *Locally* section
 2. Stop development mode and run below command instead
     ```bash
-    dx build --release
+    dx bundle --release
     ```
 3. If you success, You will have this dmg file.
 
