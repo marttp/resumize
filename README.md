@@ -34,7 +34,39 @@ The project has been designed for few use-cases
 
 #### Description
 
-TBC
+
+Current JSON format which acceptable on Backend
+
+Reference: https://github.com/marttp/tpcoder-portfolio/blob/main/src/data/experiences.json
+
+```json
+{
+  "professional": [
+    {
+      "company": "company",
+      "country": "country",
+      "position": "position",
+      "startDate": "startDate",
+      "endDate": "endDate",
+      "highlights": [
+        "...list of achievement on this company"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "school",
+      "degree": "degree",
+      "fieldOfStudy": "fieldOfStudy",
+      "startDate": "startDate",
+      "endDate": "endDate",
+      "courses": [
+        "...list of string storing course"
+      ]
+    }
+  ]
+}
+```
 
 #### Enhancement
 - 1
