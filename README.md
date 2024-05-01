@@ -7,7 +7,7 @@ This application helps generate resume content based on your experience and the 
 
 ## Article
 - EN
-- TH
+- [ช่วยตัดสินใจสร้าง Resume โดยอิงจาก Job description ด้วย Resumize (My Rust & RAG side project)](https://tpbabparn.medium.com/ช่วยตัดสินใจสร้าง-resume-โดยอิงจาก-job-description-ด้วย-resumize-my-rust-rag-side-project-1f70e2ef5eeb)
 
 ## Tech Stack
 - [Dioxus](https://dioxuslabs.com/) 0.5.1
