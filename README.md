@@ -142,7 +142,7 @@ Feel free to take a look on the mentioned article if you couldn't understand the
 
 ### Run Qdrant on locally
 
-Depending on your approach, I would suggest to using container technology to spped up on build your playground
+Depending on your approach, I would suggest to using container technology to speed up on build your playground
 
 #### Standalone container
 
