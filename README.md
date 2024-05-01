@@ -6,7 +6,7 @@ This application helps generate resume content based on your experience and the 
 ![CleanShot 2567-04-28 at 01 25 21@2x](https://github.com/marttp/rag-resume-generate/assets/34801905/b04e820e-68a5-4c15-b93c-c43aad035fe6)
 
 ## Article
-- EN
+- [Guide for your new resume to apply the dream job with Resumize (My Rust & RAG side project)](https://tpbabparn.medium.com/guide-for-your-new-resume-to-apply-the-dream-job-with-resumize-my-rust-rag-side-project-486cce64e7ea)
 - [ช่วยตัดสินใจสร้าง Resume โดยอิงจาก Job description ด้วย Resumize (My Rust & RAG side project)](https://tpbabparn.medium.com/ช่วยตัดสินใจสร้าง-resume-โดยอิงจาก-job-description-ด้วย-resumize-my-rust-rag-side-project-1f70e2ef5eeb)
 
 ## Tech Stack
